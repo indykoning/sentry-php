@@ -15,7 +15,12 @@ abstract class DebugLogger extends AbstractLogger
      */
     public function log($level, $message, array $context = []): void
     {
-        $formattedMessageAndContext = implode(' ', array_filter([(string) $message, json_encode($context)]));
+        $contextJson = json_encode($context);
+        if ($contextJson === false) {
+            $contextJson = '[JSON encoding failed]';
+        }
+        
+        $formattedMessageAndContext = implode(' ', array_filter([(string) $message, $contextJson]));
 
         $this->write(
             \sprintf("sentry/sentry: [%s] %s\n", $level, $formattedMessageAndContext)
